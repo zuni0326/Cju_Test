@@ -8,15 +8,15 @@ import java.awt.*;
  * 
  * @author Jeong Sang Yeup (zuni0326@gmail.com)
  * @version 1.0
- * @since 1.0
+ * @since 1.01
  * 
  * @created 2024-10-18
- * @lastModified 2024-10-18
+ * @lastModified 2024-10-19
  * 
  * @changelog
- * <ul>
- * 	<li>2024-10-18: 최초 생성 (Jeong Sang Yeup)</li>
- * </ul>
+ *            <ul>
+ *            <li>2024-10-18: 최초 생성 (Jeong Sang Yeup)</li>
+ *            </ul>
  */
 
 public class Calc extends JFrame {
@@ -26,8 +26,9 @@ public class Calc extends JFrame {
 	JPanel lowerPanel = new JPanel();
 
 	// upperPanel에 들어갈 계산기 결과 화면에 해당하는 구성
-	JTextArea textAreaMemoryNumbers = new JTextArea();
-	JTextArea textAreaResultNumbers = new JTextArea();
+	JButton menuList = new JButton();
+	JTextArea textFieldMemoryNumbers = new JTextArea();
+	JTextArea textFieldResultNumbers = new JTextArea();
 
 	// lowerPanel에 들어갈 버튼 구성
 	JButton bNum1 = new JButton();
@@ -59,24 +60,30 @@ public class Calc extends JFrame {
 	JButton bSquare = new JButton();
 	JButton bRoot = new JButton();
 
+	// 내부 수식 계산을 위한 결과값, 메모리값
+	double result;
+	double saveResult;
+
 	/**
-	* 처음 실행했을 때 나오는 창의 설정입니다.
-	* 
-	* @created 2024-10-18
-	* @lastModified 2024-10-18 
-	* 
-	* @changelog
-	* <ul>
-	* 	<li>2024-10-18: 최초 생성 (Jeong Sang Yeup)</li>
-	* </ul>
-	*/
+	 * 처음 실행했을 때 나오는 계산기 창의 설정입니다.
+	 * 
+	 * @created 2024-10-18
+	 * @lastModified 2024-10-19
+	 * 
+	 * @changelog
+	 *            <ul>
+	 *            <li>2024-10-18: 최초 생성 (Jeong Sang Yeup)</li>
+	 *            <li>2024-10-19:
+	 *            </ul>
+	 */
 	Calc() {
-		
+
 		setTitle("계산기");
 		setSize(335, 570);
+		setResizable(false);
 		setCalcComponent();
 		setCalcPanel();
-
+		setLocationRelativeTo(null);
 		setLayout(new GridLayout(2, 1));
 
 		add(upperPanel);
@@ -87,74 +94,143 @@ public class Calc extends JFrame {
 		setVisible(true);
 	}
 
-	/** 
+	/**
 	 * 계산기 내부를 구성하는 결과창과 버튼을 설정합니다.
 	 * 
 	 * @created 2024-10-18
-	 * @lastModified 2024-10-18
+	 * @lastModified 2024-10-19
 	 * 
 	 * @changelog
-	 *	<ul>
-	 *		<li>2024-10-18: 최초 생성 및  (Jeong Sang Yeup)</li>
-	 *	</ul>
+	 *            <ul>
+	 *            <li>2024-10-18: 최초 생성 (Jeong Sang Yeup)</li>
+	 *            </ul>
 	 */
 	void setCalcComponent() {
 
 		// 결과 화면의 설정
-		textAreaResultNumbers.setComponentOrientation(getComponentOrientation().RIGHT_TO_LEFT);
-		textAreaResultNumbers.setText("0");
-		textAreaResultNumbers.setFont(new Font("돋움", Font.BOLD, 30));
-		
-		textAreaMemoryNumbers.setComponentOrientation(getComponentOrientation().RIGHT_TO_LEFT);
 
+		textFieldResultNumbers.setComponentOrientation(getComponentOrientation().RIGHT_TO_LEFT);
+		textFieldResultNumbers.setText("0");
+		textFieldResultNumbers.setFont(new Font("맑은 고딕", Font.PLAIN, 40));
+		textFieldResultNumbers.setBackground(Color.WHITE);
+		textFieldResultNumbers.setBounds(0, 120, 310, 50);
+		
+
+		textFieldMemoryNumbers.setComponentOrientation(getComponentOrientation().RIGHT_TO_LEFT);
+		textFieldMemoryNumbers.setFont(new Font("", Font.PLAIN, 20));
+		textFieldMemoryNumbers.setForeground(Color.GRAY);
+		textFieldMemoryNumbers.setText("1");
+		textFieldMemoryNumbers.setBounds(0, 70, 310, 40);
+		
 		// 버튼 텍스트 설정
 		bNum1.setText("1");
+		bNum1.setFont(new Font("", Font.PLAIN, 14));
+		bNum1.setBackground(Color.WHITE);
 		bNum2.setText("2");
+		bNum2.setFont(new Font("", Font.PLAIN, 14));
+		bNum2.setBackground(Color.WHITE);
 		bNum3.setText("3");
+		bNum3.setFont(new Font("", Font.PLAIN, 14));
+		bNum3.setBackground(Color.WHITE);
 		bNum4.setText("4");
+		bNum4.setFont(new Font("", Font.PLAIN, 14));
+		bNum4.setBackground(Color.WHITE);
 		bNum5.setText("5");
+		bNum5.setFont(new Font("", Font.PLAIN, 14));
+		bNum5.setBackground(Color.WHITE);
 		bNum6.setText("6");
+		bNum6.setFont(new Font("", Font.PLAIN, 14));
+		bNum6.setBackground(Color.WHITE);
 		bNum7.setText("7");
+		bNum7.setFont(new Font("", Font.PLAIN, 14));
+		bNum7.setBackground(Color.WHITE);
 		bNum8.setText("8");
+		bNum8.setFont(new Font("", Font.PLAIN, 14));
+		bNum8.setBackground(Color.WHITE);
 		bNum9.setText("9");
+		bNum9.setFont(new Font("", Font.PLAIN, 14));
+		bNum9.setBackground(Color.WHITE);
 		bNum0.setText("0");
+		bNum0.setFont(new Font("", Font.PLAIN, 14));
+		bNum0.setBackground(Color.WHITE);
 
 		bPlus.setText("+");
+		bPlus.setFont(new Font("", Font.PLAIN, 14));
+		bPlus.setBackground(Color.lightGray);
 		bMinus.setText("-");
+		bMinus.setFont(new Font("", Font.PLAIN, 14));
+		bMinus.setBackground(Color.lightGray);
 		bMulti.setText("x");
+		bMulti.setFont(new Font("", Font.PLAIN, 14));
+		bMulti.setBackground(Color.lightGray);
 		bDevide.setText("÷");
+		bDevide.setFont(new Font("", Font.PLAIN, 14));
+		bDevide.setBackground(Color.lightGray);
 
 		bPlusMinus.setText("±");
+		bPlusMinus.setFont(new Font("", Font.PLAIN, 14));
+		bPlusMinus.setBackground(Color.WHITE);
 		bDot.setText(".");
+		bDot.setFont(new Font("", Font.PLAIN, 14));
+		bDot.setBackground(Color.WHITE);
 		bEqual.setText("=");
+		bEqual.setFont(new Font("", Font.PLAIN, 14));
+		bEqual.setForeground(Color.WHITE);
+		bEqual.setBackground(Color.BLUE);
 
 		bClearInputText.setText("CE");
+		bClearInputText.setFont(new Font("", Font.PLAIN, 14));
+		bClearInputText.setBackground(Color.lightGray);
 		bBackSpace.setText("⌫");
+		bBackSpace.setFont(new Font("", Font.PLAIN, 14));
+		bBackSpace.setBackground(Color.lightGray);
 		bClearAll.setText("C");
+		bClearAll.setFont(new Font("", Font.PLAIN, 14));
+		bClearAll.setBackground(Color.lightGray);
 		bPercentage.setText("%");
+		bPercentage.setFont(new Font("", Font.PLAIN, 14));
+		bPercentage.setBackground(Color.lightGray);
 
 		bFraction.setText(" ⅟x");
+		bFraction.setFont(new Font("", Font.PLAIN, 14));
+		bFraction.setBackground(Color.lightGray);
 		bSquare.setText("×²");
-		bRoot.setText("√x");
+		bSquare.setFont(new Font("", Font.PLAIN, 14));
+		bSquare.setBackground(Color.lightGray);
+		bRoot.setText("²√x");
+		bRoot.setFont(new Font("", Font.PLAIN, 14));
+		bRoot.setBackground(Color.lightGray);
+		
+		menuList.setText("Menu");
+		menuList.setFont(new Font("돋움", Font.BOLD, 12));
+		menuList.setBackground(Color.lightGray);
+		menuList.setBounds(10,10,70,30);
 	}
 
 	/**
-	* 패널 
-	* 
-	* @created 2024-10-18
-	* @lastModified 2024-10-18 
-	* 
-	* @changelog
-	* <ul>
-	* 	<li>2024-10-18: 최초 생성 (Jeong Sang Yeup)</li>
-	* </ul>
-	*/
+	 * 패널내의 구성요소 배치를 위한 메소드입니다.
+	 * 
+	 * @created 2024-10-18
+	 * @lastModified 2024-10-19
+	 * 
+	 * @changelog
+	 *            <ul>
+	 *            <li>2024-10-18: 최초 생성 (Jeong Sang Yeup)</li>
+	 *            </ul>
+	 */
 	void setCalcPanel() {
-		upperPanel.setLayout(new GridLayout(3, 1));
-		upperPanel.add(textAreaMemoryNumbers);
-		upperPanel.add(textAreaResultNumbers);
 
-		lowerPanel.setLayout(new GridLayout(6, 4, 2, 2));
+		// 패널 상단에 위치한 결과텍스트와 메모리텍스트 배치
+		upperPanel.setLayout(null);
+		upperPanel.add(menuList);
+		upperPanel.add(textFieldMemoryNumbers);
+		
+		upperPanel.add(textFieldResultNumbers);
+		upperPanel.setBackground(Color.WHITE);
+
+		// 패널 하단에 위치한 버튼 배치
+		lowerPanel.setLayout(new GridLayout(6, 4, 2, 2)); // 6행, 4열, 간격 2
+		lowerPanel.setBackground(Color.WHITE);
 		lowerPanel.add(bPercentage);
 		lowerPanel.add(bClearInputText);
 		lowerPanel.add(bClearAll);
@@ -184,6 +260,10 @@ public class Calc extends JFrame {
 		lowerPanel.add(bNum0);
 		lowerPanel.add(bDot);
 		lowerPanel.add(bEqual);
+
+	}
+
+	void setCalcEvent() {
 
 	}
 
