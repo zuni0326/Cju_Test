@@ -2,20 +2,23 @@ package Calculator;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+
 
 /**
- * 윈도우 계산기 프로그램 클래스입니다.
+ * 윈도우 계산기 프로그램 클래스입니다.(View)
  * 
  * @author Jeong Sang Yeup (zuni0326@gmail.com)
  * @version 1.0
- * @since 1.01
+ * @since 1.02
  * 
  * @created 2024-10-18
- * @lastModified 2024-10-19
+ * @lastModified 2024-10-20
  * 
  * @changelog
  *            <ul>
  *            <li>2024-10-18: 최초 생성 (Jeong Sang Yeup)</li>
+ *            <li>2024-10-20: MVC 모델 기반으로 수정 (Jeong Sang Yeup)</li>
  *            </ul>
  */
 
@@ -27,8 +30,8 @@ public class Calc extends JFrame {
 
 	// upperPanel에 들어갈 계산기 결과 화면에 해당하는 구성
 	JButton menuList = new JButton();
-	JTextArea textFieldMemoryNumbers = new JTextArea();
-	JTextArea textFieldResultNumbers = new JTextArea();
+	JTextArea textAreaMemoryNumbers = new JTextArea();
+	JTextArea textAreaResultNumbers = new JTextArea();
 
 	// lowerPanel에 들어갈 버튼 구성
 	JButton bNum1 = new JButton();
@@ -59,11 +62,13 @@ public class Calc extends JFrame {
 	JButton bFraction = new JButton();
 	JButton bSquare = new JButton();
 	JButton bRoot = new JButton();
-
+	
 	// 내부 수식 계산을 위한 결과값, 메모리값
-	double result;
-	double saveResult;
-
+	double result = 0;
+	double saveResult = 0;
+	boolean buttonCom = true;
+	
+	
 	/**
 	 * 처음 실행했을 때 나오는 계산기 창의 설정입니다.
 	 * 
@@ -73,7 +78,6 @@ public class Calc extends JFrame {
 	 * @changelog
 	 *            <ul>
 	 *            <li>2024-10-18: 최초 생성 (Jeong Sang Yeup)</li>
-	 *            <li>2024-10-19:
 	 *            </ul>
 	 */
 	Calc() {
@@ -93,12 +97,19 @@ public class Calc extends JFrame {
 
 		setVisible(true);
 	}
+	
+	public void setTextArea(String s) {
+		this.textAreaResultNumbers.setText(s);
+	}
 
+	public void setLogTextArea(String s) {
+		this.textAreaMemoryNumbers.setText(s);
+	}
 	/**
 	 * 계산기 내부를 구성하는 결과창과 버튼을 설정합니다.
 	 * 
 	 * @created 2024-10-18
-	 * @lastModified 2024-10-19
+	 * @lastModified 2024-10-20
 	 * 
 	 * @changelog
 	 *            <ul>
@@ -108,19 +119,19 @@ public class Calc extends JFrame {
 	void setCalcComponent() {
 
 		// 결과 화면의 설정
-
-		textFieldResultNumbers.setComponentOrientation(getComponentOrientation().RIGHT_TO_LEFT);
-		textFieldResultNumbers.setText("0");
-		textFieldResultNumbers.setFont(new Font("맑은 고딕", Font.PLAIN, 40));
-		textFieldResultNumbers.setBackground(Color.WHITE);
-		textFieldResultNumbers.setBounds(0, 120, 310, 50);
+		
+		textAreaResultNumbers.setComponentOrientation(getComponentOrientation());
+		textAreaResultNumbers.setText("0");
+		textAreaResultNumbers.setFont(new Font("맑은 고딕", Font.PLAIN, 25));
+		textAreaResultNumbers.setBackground(Color.WHITE);
+		textAreaResultNumbers.setBounds(0, 120, 310, 50);
 		
 
-		textFieldMemoryNumbers.setComponentOrientation(getComponentOrientation().RIGHT_TO_LEFT);
-		textFieldMemoryNumbers.setFont(new Font("", Font.PLAIN, 20));
-		textFieldMemoryNumbers.setForeground(Color.GRAY);
-		textFieldMemoryNumbers.setText("1");
-		textFieldMemoryNumbers.setBounds(0, 70, 310, 40);
+		textAreaMemoryNumbers.setComponentOrientation(getComponentOrientation());
+		textAreaMemoryNumbers.setFont(new Font("", Font.PLAIN, 20));
+		textAreaMemoryNumbers.setForeground(Color.GRAY);
+		textAreaMemoryNumbers.setText("");
+		textAreaMemoryNumbers.setBounds(0, 70, 310, 40);
 		
 		// 버튼 텍스트 설정
 		bNum1.setText("1");
@@ -160,7 +171,7 @@ public class Calc extends JFrame {
 		bMinus.setText("-");
 		bMinus.setFont(new Font("", Font.PLAIN, 14));
 		bMinus.setBackground(Color.lightGray);
-		bMulti.setText("x");
+		bMulti.setText("*");
 		bMulti.setFont(new Font("", Font.PLAIN, 14));
 		bMulti.setBackground(Color.lightGray);
 		bDevide.setText("÷");
@@ -191,16 +202,6 @@ public class Calc extends JFrame {
 		bPercentage.setFont(new Font("", Font.PLAIN, 14));
 		bPercentage.setBackground(Color.lightGray);
 
-		bFraction.setText(" ⅟x");
-		bFraction.setFont(new Font("", Font.PLAIN, 14));
-		bFraction.setBackground(Color.lightGray);
-		bSquare.setText("×²");
-		bSquare.setFont(new Font("", Font.PLAIN, 14));
-		bSquare.setBackground(Color.lightGray);
-		bRoot.setText("²√x");
-		bRoot.setFont(new Font("", Font.PLAIN, 14));
-		bRoot.setBackground(Color.lightGray);
-		
 		menuList.setText("Menu");
 		menuList.setFont(new Font("돋움", Font.BOLD, 12));
 		menuList.setBackground(Color.lightGray);
@@ -211,7 +212,7 @@ public class Calc extends JFrame {
 	 * 패널내의 구성요소 배치를 위한 메소드입니다.
 	 * 
 	 * @created 2024-10-18
-	 * @lastModified 2024-10-19
+	 * @lastModified 2024-10-20
 	 * 
 	 * @changelog
 	 *            <ul>
@@ -223,22 +224,19 @@ public class Calc extends JFrame {
 		// 패널 상단에 위치한 결과텍스트와 메모리텍스트 배치
 		upperPanel.setLayout(null);
 		upperPanel.add(menuList);
-		upperPanel.add(textFieldMemoryNumbers);
+		upperPanel.add(textAreaMemoryNumbers);
 		
-		upperPanel.add(textFieldResultNumbers);
+		upperPanel.add(textAreaResultNumbers);
 		upperPanel.setBackground(Color.WHITE);
 
 		// 패널 하단에 위치한 버튼 배치
 		lowerPanel.setLayout(new GridLayout(6, 4, 2, 2)); // 6행, 4열, 간격 2
 		lowerPanel.setBackground(Color.WHITE);
-		lowerPanel.add(bPercentage);
+
 		lowerPanel.add(bClearInputText);
 		lowerPanel.add(bClearAll);
 		lowerPanel.add(bBackSpace);
 
-		lowerPanel.add(bFraction);
-		lowerPanel.add(bSquare);
-		lowerPanel.add(bRoot);
 		lowerPanel.add(bDevide);
 
 		lowerPanel.add(bNum7);
@@ -263,11 +261,4 @@ public class Calc extends JFrame {
 
 	}
 
-	void setCalcEvent() {
-
-	}
-
-	public static void main(String[] args) {
-		new Calc();
-	}
 }
