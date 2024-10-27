@@ -10,15 +10,16 @@ import java.awt.event.ActionEvent;
  * 
  * @author Jeong Sang Yeup (zuni0326@gmail.com)
  * @version 1.0
- * @since 1.02
+ * @since 1.03
  * 
  * @created 2024-10-18
- * @lastModified 2024-10-20
+ * @lastModified 2024-10-27
  * 
  * @changelog
  *            <ul>
  *            <li>2024-10-18: 최초 생성 (Jeong Sang Yeup)</li>
  *            <li>2024-10-20: MVC 모델 기반으로 수정 (Jeong Sang Yeup)</li>
+ *            <li>2024-10-27: 사칙연산 구현 및 코드 정리 </li>
  *            </ul>
  */
 
@@ -99,10 +100,12 @@ public class Calc extends JFrame {
 	}
 	
 	public void setTextArea(String s) {
+
 		this.textAreaResultNumbers.setText(s);
 	}
 
 	public void setLogTextArea(String s) {
+		s += " ";
 		this.textAreaMemoryNumbers.setText(s);
 	}
 	/**
